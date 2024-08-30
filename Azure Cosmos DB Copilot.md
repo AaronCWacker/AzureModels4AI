@@ -112,13 +112,16 @@ graph TD
     A[Learn More]
     B[Copilot in Cosmos DB Blog]
     C[Copilot Learn More]
+    D[James Codella's Video on Azure Cosmos DB]
 
     A --> B
     A --> C
+    A --> D
 
     click B "https://aka.ms/CopilotInCosmosDBBlog" _blank
     click C "https://aka.ms/cdb-copilot-learn-more" _blank
+    click D "https://www.youtube.com/watch?v=STc30jdBwl8&list=PLHgX2IExbFos07Jf1iT2gg94A2IArbmLC&index=3&t=1049s" _blank
 
     classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
-    class A,B,C default;
+    class A,B,C,D default;
 ```
