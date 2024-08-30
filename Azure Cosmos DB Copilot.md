@@ -105,7 +105,7 @@ graph TD
     class B1,B2,B3,B4,C1,D1,D2,D3,D4,D5,D6 subnode;
 ```
 
-## Learn More Resources and Reference Video
+## Learn More Resource Links and Reference Video
 ```mermaid
 graph TD
     A[Learn More]
