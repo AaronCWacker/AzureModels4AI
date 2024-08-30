@@ -106,3 +106,19 @@ graph TD
     classDef subnode fill:#4BA0E0,color:#ffffff,stroke:#4BA0E0,stroke-width:2px;
     class B1,B2,B3,B4,C1,D1,D2,D3,D4,D5,D6 subnode;
 ```
+
+```mermaid
+graph TD
+    A[Learn More]
+    B[Copilot in Cosmos DB Blog]
+    C[Copilot Learn More]
+
+    A --> B
+    A --> C
+
+    click B "https://aka.ms/CopilotInCosmosDBBlog" _blank
+    click C "https://aka.ms/cdb-copilot-learn-more" _blank
+
+    classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
+    class A,B,C default;
+```
