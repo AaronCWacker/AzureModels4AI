@@ -1,9 +1,7 @@
 
 # Azure Cosmos DB Copilot Pipeline
 
-### Based on James Codella of MS Video located here:  https://www.youtube.com/watch?v=STc30jdBwl8&list=PLHgX2IExbFos07Jf1iT2gg94A2IArbmLC&index=3&t=1049s
-
-
+## Copilot Pipeline Overview
 ```mermaid
 graph LR
     A[System Prompts] --> D[Azure OpenAI Service]
@@ -14,7 +12,7 @@ graph LR
     F --> G[Microsoft Copilot for Azure in Cosmos DB]
 ```
 
-
+# Testing Criteria
 ```mermaid
 graph LR
     A[1. Validity]
@@ -32,7 +30,7 @@ graph LR
     style E fill:#ff9999,stroke:#333,stroke-width:2px
 ```
 
-
+# Responsible AI Framework
 ```mermaid
 graph TD
     A[Responsible AI]
@@ -61,7 +59,7 @@ graph TD
     classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
 ```
 
-
+# Red Teaming Process
 ```mermaid
 graph TD
     A[Red Teaming]
@@ -107,6 +105,7 @@ graph TD
     class B1,B2,B3,B4,C1,D1,D2,D3,D4,D5,D6 subnode;
 ```
 
+## Learn More Resources and Reference Video
 ```mermaid
 graph TD
     A[Learn More]
