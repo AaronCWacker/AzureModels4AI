@@ -28,3 +28,32 @@ graph LR
     style D fill:#f0f0f0,stroke:#333,stroke-width:2px
     style E fill:#ff9999,stroke:#333,stroke-width:2px
 ```
+
+
+```mermaid
+graph TD
+    A[Responsible AI]
+    B[Fairness]
+    C[Reliability & Safety]
+    D[Privacy & Security]
+    E[Inclusiveness]
+    F[Transparency]
+    G[Accountability]
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    A --> G
+
+    style A fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style B fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style C fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style D fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style E fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style F fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+    style G fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
+
+    classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
+```
