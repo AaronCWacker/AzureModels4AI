@@ -1,6 +1,9 @@
 
 # Azure Cosmos DB Copilot Pipeline
 
+### Based on James Codella of MS Video located here:  https://www.youtube.com/watch?v=STc30jdBwl8&list=PLHgX2IExbFos07Jf1iT2gg94A2IArbmLC&index=3&t=1049s
+
+
 ```mermaid
 graph LR
     A[System Prompts] --> D[Azure OpenAI Service]
@@ -56,4 +59,50 @@ graph TD
     style G fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px
 
     classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
+```
+
+
+```mermaid
+graph TD
+    A[Red Teaming]
+    
+    B[Planning Phase]
+    B1[Who will do the testing?]
+    B2[What to test?]
+    B3[How to test?]
+    B4[How to record data?]
+    
+    C[Execution Phase]
+    C1[Conduct red teaming]
+    
+    D[Reporting Phase]
+    D1[Report regularly with key stakeholders]
+    D2[Lists the top identified issues]
+    D3[Provides a link to the raw data]
+    D4[Previews the testing plan for upcoming rounds]
+    D5[Acknowledges red teamers]
+    D6[Provides any other relevant information]
+
+    A --> B
+    A --> C
+    A --> D
+    
+    B --> B1
+    B --> B2
+    B --> B3
+    B --> B4
+    
+    C --> C1
+    
+    D --> D1
+    D1 --> D2
+    D1 --> D3
+    D1 --> D4
+    D1 --> D5
+    D1 --> D6
+
+    classDef default fill:#0078D4,color:#ffffff,stroke:#0078D4,stroke-width:2px;
+    class A,B,C,D default;
+    classDef subnode fill:#4BA0E0,color:#ffffff,stroke:#4BA0E0,stroke-width:2px;
+    class B1,B2,B3,B4,C1,D1,D2,D3,D4,D5,D6 subnode;
 ```
