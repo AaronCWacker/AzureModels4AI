@@ -708,5 +708,18 @@ Once completed it should look like this.  The trigger will accept new multiple p
 ![image](https://github.com/user-attachments/assets/8d3a1b2e-fa13-4add-bfda-9f17bf03050b)
 
 
+Now that we have the basic design layed out when can refactor to make it work.
+
+Lets create a new Azure function..
+1. Go to resource group:
+![image](https://github.com/user-attachments/assets/2a576127-8668-4b84-b184-f83ec9522809)
+2. Search Azure Function (app):
+![image](https://github.com/user-attachments/assets/6d8e8ce0-9114-4ca5-8bea-745e02700c47)
+3. Add it:
+![image](https://github.com/user-attachments/assets/0c6ecba5-0b92-4f56-aee5-2beb694ea0b1)
+
+Make sure the region is the same as your Cosmos DB.  Below it is Central:
+![image](https://github.com/user-attachments/assets/298ebef9-2f1b-435a-9537-0aae33d23d1c)
+
 
 
