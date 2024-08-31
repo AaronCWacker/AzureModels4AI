@@ -978,3 +978,96 @@ jobs:
 ```
 
 
+# Retry using external connection from Streamlit Huggingface app.
+
+![image](https://github.com/user-attachments/assets/e6051b85-16f8-46d9-a47e-da0a9d65fba0)
+
+
+```python
+
+import streamlit as st
+from azure.cosmos import CosmosClient
+import os
+
+# Cosmos DB configuration
+ENDPOINT = "https://acae-afd.documents.azure.com:443/"
+SUBSCRIPTION_ID = "003fba60-5b3f-48f4-ab36-3ed11bc40816"
+
+# You'll need to set these environment variables or use Azure Key Vault
+DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
+CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+
+def insert_record(record):
+    try:
+        response = container.create_item(body=record)
+        return True, response
+    except Exception as e:
+        return False, str(e)
+
+# Streamlit app
+st.title("🌟 Cosmos DB Record Insertion")
+
+# Login section
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    st.subheader("🔐 Login")
+    input_key = st.text_input("Enter your Cosmos DB Primary Key", type="password")
+    if st.button("🚀 Login"):
+        if input_key:
+            st.session_state.primary_key = input_key
+            st.session_state.logged_in = True
+            st.experimental_rerun()
+        else:
+            st.error("Please enter a valid key")
+else:
+    # Initialize Cosmos DB client
+    client = CosmosClient(ENDPOINT, credential=st.session_state.primary_key)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
+
+    # Input fields
+    st.subheader("📝 Enter Record Details")
+    id = st.text_input("ID")
+    name = st.text_input("Name")
+    age = st.number_input("Age", min_value=0, max_value=150)
+    city = st.text_input("City")
+
+    # Submit button
+    if st.button("💾 Insert Record"):
+        record = {
+            "id": id,
+            "name": name,
+            "age": age,
+            "city": city
+        }
+        
+        success, response = insert_record(record)
+        if success:
+            st.success("✅ Record inserted successfully!")
+            st.json(response)
+        else:
+            st.error(f"❌ Failed to insert record: {response}")
+
+    # Logout button
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.experimental_rerun()
+
+    # Display connection info
+    st.sidebar.subheader("🔗 Connection Information")
+    st.sidebar.text(f"Endpoint: {ENDPOINT}")
+    st.sidebar.text(f"Subscription ID: {SUBSCRIPTION_ID}")
+    st.sidebar.text(f"Database: {DATABASE_NAME}")
+    st.sidebar.text(f"Container: {CONTAINER_NAME}")
+
+```
+
+
+# Next create it as streamlit app on HF:
+
+# You'll need to set these environment variables by adding to Space secrets.
+DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
+CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+
