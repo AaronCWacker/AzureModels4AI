@@ -1320,3 +1320,215 @@ function processQTPrompts(promptText) {
 }
 
 ```
+![image](https://github.com/user-attachments/assets/b3562c3d-1345-4df4-a592-ce58f6b2743e)
+
+
+# Final Version!
+
+Now both insert works and stored procedure works from AI App to the Azure Cosmos DB instance.
+
+Below is a demonstration:
+
+## Insert
+![image](https://github.com/user-attachments/assets/a04330e7-b6ad-49b6-bf9d-c02d7be0d4fc)
+
+## Stored Procedure
+![image](https://github.com/user-attachments/assets/63e30f0c-1853-46d9-9c9a-5f5ccfb2d640)
+
+## Final Code for Streamlit UI App (Public) : https://huggingface.co/spaces/awacke1/AzureCosmosDBUI
+
+```python
+import streamlit as st
+from azure.cosmos import CosmosClient
+import os
+
+# Cosmos DB configuration
+ENDPOINT = "https://acae-afd.documents.azure.com:443/"
+SUBSCRIPTION_ID = "003fba60-5b3f-48f4-ab36-3ed11bc40816"
+# You'll need to set these environment variables or use Azure Key Vault
+DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
+CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+Key = os.environ.get("Key")
+
+def insert_record(record):
+    try:
+        response = container.create_item(body=record)
+        return True, response
+    except Exception as e:
+        return False, str(e)
+
+def call_stored_procedure(record):
+    try:
+        response = container.scripts.execute_stored_procedure(
+            sproc="processPrompt",
+            params=[record],
+            partition_key=record['id']
+        )
+        return True, response
+    except Exception as e:
+        error_message = f"Error type: {type(e).__name__}\nError message: {str(e)}"
+        if hasattr(e, 'sub_status'):
+            error_message += f"\nSub-status: {e.sub_status}"
+        if hasattr(e, 'response'):
+            error_message += f"\nResponse: {e.response}"
+        return False, error_message
+
+        
+# Streamlit app
+st.title("🌟 Cosmos DB Record Insertion and Procedure Execution")
+
+# Login section
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    st.subheader("🔐 Login")
+    input_key = Key
+    if st.button("🚀 Login"):
+        if input_key:
+            st.session_state.primary_key = input_key
+            st.session_state.logged_in = True
+            st.rerun()
+        else:
+            st.error("Please enter a valid key")
+else:
+    # Initialize Cosmos DB client
+    client = CosmosClient(ENDPOINT, credential=st.session_state.primary_key)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
+
+    # Input fields
+    st.subheader("📝 Enter Record Details")
+    id = st.text_input("ID")
+    name = st.text_input("Name")
+    document = st.text_area("Document")
+    evaluation_text = st.text_area("Evaluation Text")
+    evaluation_score = st.number_input("Evaluation Score", min_value=0, max_value=100, step=1)
+
+    col1, col2 = st.columns(2)
+
+    # Insert Record button
+    with col1:
+        if st.button("💾 Insert Record"):
+            record = {
+                "id": id,
+                "name": name,
+                "document": document,
+                "evaluationText": evaluation_text,
+                "evaluationScore": evaluation_score
+            }
+            
+            success, response = insert_record(record)
+            if success:
+                st.success("✅ Record inserted successfully!")
+                st.json(response)
+            else:
+                st.error(f"❌ Failed to insert record: {response}")
+
+    # Call Procedure button
+    with col2:
+        if st.button("🔧 Call Procedure"):
+            record = {
+                "id": id,
+                "name": name,
+                "document": document,
+                "evaluationText": evaluation_text,
+                "evaluationScore": evaluation_score
+            }
+            
+            success, response = call_stored_procedure(record)
+            if success:
+                st.success("✅ Stored procedure executed successfully!")
+                st.json(response)
+            else:
+                st.error(f"❌ Failed to execute stored procedure: {response}")
+
+    # Logout button
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.rerun()
+
+    # Display connection info
+    st.sidebar.subheader("🔗 Connection Information")
+    st.sidebar.text(f"Endpoint: {ENDPOINT}")
+    st.sidebar.text(f"Subscription ID: {SUBSCRIPTION_ID}")
+    st.sidebar.text(f"Database: {DATABASE_NAME}")
+    st.sidebar.text(f"Container: {CONTAINER_NAME}")
+```
+
+## Stored Procedure Code on Azure Cosmos DB
+
+### processPrompt:
+
+```javascript
+
+function processPrompt(input) {
+    var context = getContext();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    // Ensure we have the required input
+    if (!input || !input.id || !input.document) {
+        throw new Error("Input must contain 'id' and 'document' fields");
+    }
+
+    // Split the document by lines starting with "QT"
+    var lines = input.document.split('\n');
+    var promptItems = [];
+    var currentItem = null;
+
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.startsWith("QT")) {
+            if (currentItem) {
+                promptItems.push(currentItem);
+            }
+            currentItem = line;
+        } else if (currentItem) {
+            currentItem += " " + line;
+        }
+    }
+
+    // Add the last item if it exists
+    if (currentItem) {
+        promptItems.push(currentItem);
+    }
+
+    // Process each prompt item
+    var createdItems = 0;
+    for (var j = 0; j < promptItems.length; j++) {
+        var promptItem = promptItems[j];
+        var colonIndex = promptItem.indexOf(':');
+        var name = colonIndex > -1 ? promptItem.substring(3, colonIndex).trim() : "";
+        var promptText = colonIndex > -1 ? promptItem.substring(colonIndex + 1).trim() : promptItem;
+
+        var newItem = {
+            id: input.id + "_" + j,
+            name: name,
+            document: promptText,
+            evaluationText: input.evaluationText || "",
+            evaluationScore: input.evaluationScore || 0
+        };
+
+        // Create the new item in the container
+        var accepted = container.createDocument(container.getSelfLink(), newItem, 
+            function(err, itemCreated) {
+                if (err) throw new Error("Error creating document: " + err.message);
+            }
+        );
+
+        if (!accepted) {
+            throw new Error("Unable to create more documents");
+        }
+
+        createdItems++;
+    }
+
+    // Set the response body
+    response.setBody({
+        status: "Success",
+        message: "Processed and created " + createdItems + " items."
+    });
+}
+
+```
