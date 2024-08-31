@@ -568,8 +568,144 @@ Once saved we will have a single item with the normalized language.
 ![image](https://github.com/user-attachments/assets/5ecd60b4-8dc2-41e3-8765-3dc8f041e0ff)
 
 
+# Triggers and Stored Procedures to Interact with AI as a Service:
+
+To make this work in your Azure Cosmos DB environment:
+
+Update the trigger:
+
+Go to your Azure Cosmos DB account in the Azure portal.
+Navigate to your database and container.
+In the "Scale & Settings" section, find the "Triggers" tab.
+Create a new trigger or update the existing one with the code from the "Updated Azure Cosmos DB Trigger" artifact.
+Set the trigger type to "Pre-trigger" and operation type to "Create".
 
 
+Create the stored procedure:
+
+In the same container, go to the "Stored Procedures" tab.
+Create a new stored procedure named "processPrompt" and paste the code from the "Azure Cosmos DB Stored Procedure" artifact.
+
+
+Test the setup:
+
+Insert the document you provided into your container.
+The trigger should automatically process each QT prompt, calling the stored procedure for each one.
+The stored procedure will send a web request for each prompt and create a new document with the response.
+
+
+
+Important notes:
+
+Cosmos DB has limitations on stored procedures, including a maximum execution time and no direct internet access. The XMLHttpRequest in the stored procedure is conceptual and won't work as-is. In a real-world scenario, you'd need to use an Azure Function or Logic App to make the HTTP requests.
+The trigger and stored procedure assume that the HuggingFace API returns JSON. If it doesn't, you'll need to adjust the response parsing.
+Error handling in this example is basic. In a production environment, you'd want more robust error handling and logging.
+This setup will create a new document for each QT prompt in the original document. Make sure your container can handle the increased document count and storage.
+The URL in the stored procedure is hardcoded. In a real-world scenario, you might want to pass this as a parameter or store it in a configuration document.
+
+To implement this in a production environment, you would need to:
+
+Replace the XMLHttpRequest in the stored procedure with an Azure Function HTTP trigger.
+Set up an Azure Function that makes the HTTP request to the HuggingFace API.
+Use the Cosmos DB SDK in the Azure Function to create the new document with the API response.
+Modify the trigger to call the Azure Function instead of the stored procedure.
+
+This approach would allow you to make external HTTP requests while still leveraging the power of Cosmos DB triggers for automatic processing of new documents.
+
+## Trigger:
+
+```javascript
+
+function trigger() {
+    var context = getContext();
+    var request = context.getRequest();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    // Check if this is a create operation
+    if (request.getOperationType() !== "Create") {
+        return;
+    }
+
+    // Get the document from the request
+    var doc = request.getBody();
+
+    // Check if the document has the expected structure
+    if (!doc.qtPrompts || !Array.isArray(doc.qtPrompts)) {
+        return;
+    }
+
+    // Call the stored procedure for each QT prompt
+    doc.qtPrompts.forEach(function(prompt) {
+        var sprocLink = container.getAltLink() + "/sprocs/processPrompt";
+        var sprocParams = [prompt.title, prompt.elements];
+        
+        container.executeStoredProcedure(sprocLink, sprocParams, function(err, result) {
+            if (err) throw new Error("Error executing stored procedure: " + err.message);
+            // You could potentially do something with the result here
+        });
+    });
+}
+
+```
+
+
+## Stored Procedure
+
+```javascript
+function processPrompt(title, elements) {
+    var context = getContext();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    // Combine title and elements into a query string
+    var query = encodeURIComponent(title + " " + elements.join(" "));
+    var url = "https://huggingface.co/spaces/awacke1/ScienceBrain.AI?q=" + query;
+
+    // Send HTTP GET request
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // Create a new document with the response
+                var newDoc = {
+                    id: generateGUID(),
+                    originalPrompt: {
+                        title: title,
+                        elements: elements
+                    },
+                    aiResponse: JSON.parse(xhr.responseText),
+                    createdAt: new Date().toISOString()
+                };
+
+                // Insert the new document
+                container.createDocument(container.getSelfLink(), newDoc, function(err, createdDoc) {
+                    if (err) throw new Error("Error creating document: " + err.message);
+                    response.setBody(createdDoc);
+                });
+            } else {
+                throw new Error("HTTP request failed with status: " + xhr.status);
+            }
+        }
+    };
+    xhr.send();
+
+    // Helper function to generate a GUID
+    function generateGUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+}
+```
+
+Once completed it should look like this.  The trigger will accept new multiple part records as a document.  It will call the stored procedure which will then call the web application which follows the search engine query parameter ?q= pattern used by other search engines as a simple GET pattern.
+
+
+![image](https://github.com/user-attachments/assets/8d3a1b2e-fa13-4add-bfda-9f17bf03050b)
 
 
 
