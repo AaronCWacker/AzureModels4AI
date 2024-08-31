@@ -1081,3 +1081,243 @@ else:
 
 ![image](https://github.com/user-attachments/assets/904f6510-fe47-4249-bbc3-c3f8331d639f)
 
+# Insert looks like this in JSON Data Explorer
+
+
+![image](https://github.com/user-attachments/assets/ba020106-d5ac-44b9-a375-6d876710177a)
+```json
+{
+    "id": "1",
+    "name": "How many different types of motion and and optical sensors are on a yellow nape amazon parrot?  Detail everything you know about the eye cells brain, etc and anything unique you know",
+    "age": 2,
+    "city": "Mound",
+    "_rid": "rgQrAPkwgHsCAAAAAAAAAA==",
+    "_self": "dbs/rgQrAA==/colls/rgQrAPkwgHs=/docs/rgQrAPkwgHsCAAAAAAAAAA==/",
+    "_etag": "\"41004e31-0000-0300-0000-66d372980000\"",
+    "_attachments": "attachments/",
+    "_ts": 1725133464
+}
+```
+
+
+
+
+# Stored Procedure and Streamlit Interface for AI Cosmos DB
+
+```python
+
+import streamlit as st
+from azure.cosmos import CosmosClient, PartitionKey
+import os
+
+# Cosmos DB configuration
+ENDPOINT = "https://acae-afd.documents.azure.com:443/"
+SUBSCRIPTION_ID = "003fba60-5b3f-48f4-ab36-3ed11bc40816"
+
+# You'll need to set these environment variables or use Azure Key Vault
+DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
+CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+Key = os.environ.get("Key")
+
+def create_stored_procedure(container):
+    stored_procedure_definition = {
+        'id': 'processQTPrompts',
+        'body': '''
+        function processQTPrompts(promptText) {
+            var context = getContext();
+            var container = context.getCollection();
+            var response = context.getResponse();
+
+            var prompts = promptText.split('\\n');
+            var results = [];
+
+            for (var i in prompts) {
+                var prompt = prompts[i].trim();
+                if (prompt.startsWith('QT ')) {
+                    var querySpec = {
+                        query: "SELECT * FROM c WHERE c.id = @id",
+                        parameters: [{ name: "@id", value: prompt }]
+                    };
+
+                    var isAccepted = container.queryDocuments(
+                        container.getSelfLink(),
+                        querySpec,
+                        function (err, items, responseOptions) {
+                            if (err) throw err;
+
+                            if (items.length > 0) {
+                                // Update existing record
+                                var item = items[0];
+                                item.occurrenceCount++;
+                                container.replaceDocument(
+                                    item._self,
+                                    item,
+                                    function (err, replacedItem) {
+                                        if (err) throw err;
+                                        results.push(replacedItem);
+                                    }
+                                );
+                            } else {
+                                // Create new record
+                                var newItem = {
+                                    id: prompt,
+                                    occurrenceCount: 1,
+                                    evaluation: ""
+                                };
+                                container.createDocument(
+                                    container.getSelfLink(),
+                                    newItem,
+                                    function (err, createdItem) {
+                                        if (err) throw err;
+                                        results.push(createdItem);
+                                    }
+                                );
+                            }
+                        }
+                    );
+
+                    if (!isAccepted) throw new Error("The query was not accepted by the server.");
+                }
+            }
+
+            response.setBody(results);
+        }
+        '''
+    }
+    container.scripts.create_stored_procedure(body=stored_procedure_definition)
+
+def ensure_stored_procedure_exists(container):
+    try:
+        container.scripts.get_stored_procedure('processQTPrompts')
+    except:
+        create_stored_procedure(container)
+
+def process_qt_prompts(container, prompt_text):
+    # Use a dummy partition key value
+    partition_key = "dummy_partition_key"
+    return container.scripts.execute_stored_procedure(
+        sproc='processQTPrompts',
+        params=[prompt_text],
+        partition_key=partition_key
+    )
+
+# Streamlit app
+st.title("🌟 QT Prompt Processor")
+
+# Login section
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    st.subheader("🔐 Login")
+    #input_key = st.text_input("Enter your Cosmos DB Primary Key", type="password")
+    input_key = Key
+    if st.button("🚀 Login"):
+        if input_key:
+            st.session_state.primary_key = input_key
+            st.session_state.logged_in = True
+            st.experimental_rerun()
+        else:
+            st.error("Please enter a valid key")
+else:
+    # Initialize Cosmos DB client
+    client = CosmosClient(ENDPOINT, credential=st.session_state.primary_key)
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
+
+    # Ensure the stored procedure exists
+    ensure_stored_procedure_exists(container)
+
+    # Input field for QT prompts
+    st.subheader("📝 Enter QT Prompts")
+    default_text = "QT Crystal finders: Bioluminescent crystal caverns, quantum-powered explorers, prismatic hues, alien planet\nQT robot art: Cybernetic metropolis, sentient androids, rogue AI, neon-infused palette\nQT the Lava girl: Volcanic exoplanet, liquid metal rivers, heat-immune heroine, molten metallic palette"
+    qt_prompts = st.text_area("QT Prompts", value=default_text, height=300)
+
+    # Submit button
+    if st.button("🚀 Process QT Prompts"):
+        try:
+            results = process_qt_prompts(container, qt_prompts)
+            
+            # Display results in a dataframe
+            df_data = [{"Prompt": item['id'], "Occurrence Count": item['occurrenceCount']} for item in results]
+            st.dataframe(df_data)
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
+
+    # Logout button
+    if st.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.experimental_rerun()
+
+    # Display connection info
+    st.sidebar.subheader("🔗 Connection Information")
+    st.sidebar.text(f"Endpoint: {ENDPOINT}")
+    st.sidebar.text(f"Subscription ID: {SUBSCRIPTION_ID}")
+    st.sidebar.text(f"Database: {DATABASE_NAME}")
+    st.sidebar.text(f"Container: {CONTAINER_NAME}")
+```
+
+# Stored Procedure processPrompt
+
+```javascript
+function processQTPrompts(promptText) {
+    var context = getContext();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    var prompts = promptText.split('\n');
+    var results = [];
+
+    for (var i in prompts) {
+        var prompt = prompts[i].trim();
+        if (prompt.startsWith('QT ')) {
+            var querySpec = {
+                query: "SELECT * FROM c WHERE c.id = @id",
+                parameters: [{ name: "@id", value: prompt }]
+            };
+
+            var isAccepted = container.queryDocuments(
+                container.getSelfLink(),
+                querySpec,
+                function (err, items, responseOptions) {
+                    if (err) throw err;
+
+                    if (items.length > 0) {
+                        // Update existing record
+                        var item = items[0];
+                        item.occurrenceCount++;
+                        container.replaceDocument(
+                            item._self,
+                            item,
+                            function (err, replacedItem) {
+                                if (err) throw err;
+                                results.push(replacedItem);
+                            }
+                        );
+                    } else {
+                        // Create new record
+                        var newItem = {
+                            id: prompt,
+                            occurrenceCount: 1,
+                            evaluation: ""
+                        };
+                        container.createDocument(
+                            container.getSelfLink(),
+                            newItem,
+                            function (err, createdItem) {
+                                if (err) throw err;
+                                results.push(createdItem);
+                            }
+                        );
+                    }
+                }
+            );
+
+            if (!isAccepted) throw new Error("The query was not accepted by the server.");
+        }
+    }
+
+    response.setBody(results);
+}
+
+```
