@@ -726,23 +726,32 @@ Set to Python and give it a name.  Below I use ai01-app.
 
 ![image](https://github.com/user-attachments/assets/7e84b25d-38ab-4d41-abad-276ae8c3d6b1)
 
-You're absolutely right, and I apologize for the confusion in my previous response. Let's create an Azure Function to handle the HTTP request and a new stored procedure to call this function.
-First, let's create an Azure Function:
-Azure Function: ProcessPromptClick to open code
-Now, let's create a new stored procedure that will call this Azure Function:
-Updated Azure Cosmos DB Stored Procedure: processPromptClick to open code
-To implement this solution:
+# Create Azure Function and Stored Procedure to call ScienceBrain and save results.  
 
-Deploy the Azure Function:
+This is loosely coupling the Azure Function, the Huggingface Python Streamlit App with Query Parameter Inferencing, and the Azure Cosmos DB to run it all. These three components together are infinitely scalable and form a data storage and control process with preprocessing in our Azure Cosmos DB which allows us to do cool things!
+
+Let's create an Azure Function to handle the HTTP request and a new stored procedure to call this function.
+
+First, let's create an Azure Function:
+1. Azure Function: ProcessPromptClick to open code
+2. Now, let's create a new stored procedure that will call this Azure Function:
+3. Updated Azure Cosmos DB Stored Procedure:
+4. processPrompt
+
+To implement this solution:
+  Deploy the Azure Function:
 
 Create a new Function App in Azure.
+
 Create a new HTTP-triggered function and paste the code from the "Azure Function: ProcessPrompt" artifact.
+
 Make sure to install the axios and @azure/cosmos packages in your Function App.
+
 Set up the following application settings in your Function App:
 
-CosmosDBConnectionString: Your Cosmos DB connection string
-DatabaseName: Your database name
-ContainerName: Your container name
+**CosmosDBConnectionString**: Your Cosmos DB connection string
+**DatabaseName**: Your database name
+**ContainerName**: Your container name
 
 
 
@@ -751,7 +760,7 @@ Update the stored procedure:
 
 In your Cosmos DB container, go to the "Stored Procedures" tab.
 Create a new stored procedure named "processPrompt" and paste the code from the "Updated Azure Cosmos DB Stored Procedure" artifact.
-Replace "https://your-function-app.azurewebsites.net/api/ProcessPrompt" with the actual URL of your deployed Azure Function.
+Replace "https://your-function-app.azurewebsites.net/api/ProcessPrompt" with the actual URL of your deployed Azure Function.  Mine will be https://ai01-app.azurewebsites.net/api/ProcessPrompt
 
 
 Update the trigger (if necessary):
