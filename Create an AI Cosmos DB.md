@@ -156,8 +156,411 @@ QT with your Surreal Art: Fractal crystalline motherships, impossible light spec
 QT with your Women in Harmony Art: Hive-mind alien projections, holographic dreamscapes, quantum spacetime fabric
 ```
 
+# Creating your First Item
+Next we want to add the new items into the table.  With your favorite LLM try the following prompt pattern:
 
 
+
+```python
+
+# Reformat this for me to put into a new item:
+
+
+{
+    "id": "replace_with_new_document_id",
+    "Id": "replace_with_new_partition_key_value"
+}
+
+
+
+---
+
+
+
+QT Crystal finders: Bioluminescent crystal caverns, quantum-powered explorers, prismatic hues, alien planet
+QT robot art: Cybernetic metropolis, sentient androids, rogue AI, neon-infused palette
+QT the Lava girl: Volcanic exoplanet, liquid metal rivers, heat-immune heroine, molten metallic palette
+QT Underwater Hatch: Submersible alien cityscape, aquanauts, ancient stargate, bioluminescent palette
+QT with your 1930s art: Retro-futuristic art deco spaceport, time-traveling agents, sepia-toned futurism
+QT with your Alien Beauty on Mars: Terraformed Martian oasis, ethereal alien ambassador, rust-emerald color scheme
+QT with your Alien Samurai: Extraterrestrial feudal world, cybernetic ronin, plasma katanas, iridescent metallic
+QT with your angel art: Interdimensional celestial nexus, bio-engineered guardians, ethereal luminescence
+QT with your bearded man art: Cryogenic revival chamber, dormant captain, generation ship, stark contrasts
+QT with your Black and White Art: Monochromatic lunar base, shadow-dwelling aliens, light manipulation, high-contrast grayscale
+QT with your colorful art: Psychedelic nebula, living constellations, synesthete navigators, kaleidoscopic explosion
+QT with your Cosmic Beauty: Sentient galactic superstructure, energy beings, space-fabric sculpting, cosmic grandeur
+QT with your defeat art: Post-apocalyptic Earth, nature reclaimed, human resistance, machine overlords
+QT with your gold art: Alchemical space laboratory, transmutation engines, immortality quest, metallic gold-copper
+QT with your green art: Biopunk megacity, genetically-modified flora, chlorophyll-enhanced humans, verdant vibrancy
+QT with your Knight art: Exoplanet medieval tournament, plasma lances, power-armored knights, technofantasy aesthetic
+QT with your Limoncello art: Orbital citrus grove, xenobotanists, intergalactic elixir, zesty yellow mists
+QT with your market art: Floating gas giant bazaar, holographic merchants, impossible wares, vibrant alien markets
+QT with your Monster Tea Party art: Living spaceship summit, shape-shifting aliens, psychoactive brews, whimsical cosmic horror
+QT with your Moon art: Tidal-locked lunar metropolis, gravitational artists, moondustscapes, stark contrasts
+QT with your painting art: Virtual reality museum, impossible artworks, AI curators, reality-bending palette
+QT with your pilot art: Quantum entanglement cockpit, cyborg pilots, multiverse navigation, sleek futuristic design
+QT with your Reverent Silence Art: Interstellar monastery, telepathic monks, forgotten civilizations, muted otherworldly tones
+QT with your sailing art: Solar wind spaceship, stellar cartographers, cosmic currents, solar flare palette
+QT with your Samurai art: Holographic dojo, space ronin, AI sensei, neo-Tokyo cyberpunk aesthetic
+QT with your Tea Time art: Zero-gravity tea ceremony, time-dilating brews, generation ship, delicate cosmic pastels
+QT with your Victorian art: Steampunk space elevator, aether-powered automatons, neo-London, brass-fog scheme
+QT your assassin: Chameleon-skinned hitman, neon space station, mimicking nanobots, adaptive camouflage
+QT your Knight art: Quantum-locked armor, interdimensional peacekeepers, AI weapons, technofantasy fusion
+QT your Rocking Horse: Bioengineered low-gravity steeds, neural-linked riders, alien steppes, ethereal starscapes
+QT your Selfie: Multidimensional mirror maze, quantum photographers, infinite realities, fractal patterns
+QT your Sumo wrestler: Low-gravity martial arts arena, genetically-enhanced athletes, alien physics, dynamic motion
+QT with your Alien Art: Hyperdimensional nebula, pulsating alien megalopolis, swirling cosmic plasma
+QT with your Pink: Antimatter cascade, cyberpunk metropolis, retina-searing magenta radiation
+QT with your New Cartoon Character Art: Reality-bending art gala, anti-gravity vortexes, quantum-entangled extraterrestrials
+QT with your Flowers Art: Xenomorphic botanist, sentient bioluminescent ecosystem, chromatic neutron star
+QT with your Surreal Art: Fractal crystalline motherships, impossible light spectra, Earth's wonders
+QT with your Women in Harmony Art: Hive-mind alien projections, holographic dreamscapes, quantum spacetime fabric
+```
+
+These items above have structural logic.  Below is output from the LLM which will be used as your first trigger multi-replicator item creation job for AI.
+
+```json
+{
+  "id": "qt_prompts_collection",
+  "originalText": "QT Crystal finders: Bioluminescent crystal caverns, quantum-powered explorers, prismatic hues, alien planet\nQT robot art: Cybernetic metropolis, sentient androids, rogue AI, neon-infused palette\n...",
+  "qtPrompts": [
+    {
+      "title": "Crystal finders",
+      "elements": [
+        "Bioluminescent crystal caverns",
+        "quantum-powered explorers",
+        "prismatic hues",
+        "alien planet"
+      ]
+    },
+    {
+      "title": "robot art",
+      "elements": [
+        "Cybernetic metropolis",
+        "sentient androids",
+        "rogue AI",
+        "neon-infused palette"
+      ]
+    },
+    {
+      "title": "the Lava girl",
+      "elements": [
+        "Volcanic exoplanet",
+        "liquid metal rivers",
+        "heat-immune heroine",
+        "molten metallic palette"
+      ]
+    },
+    {
+      "title": "Underwater Hatch",
+      "elements": [
+        "Submersible alien cityscape",
+        "aquanauts",
+        "ancient stargate",
+        "bioluminescent palette"
+      ]
+    },
+    {
+      "title": "with your 1930s art",
+      "elements": [
+        "Retro-futuristic art deco spaceport",
+        "time-traveling agents",
+        "sepia-toned futurism"
+      ]
+    },
+    {
+      "title": "with your Alien Beauty on Mars",
+      "elements": [
+        "Terraformed Martian oasis",
+        "ethereal alien ambassador",
+        "rust-emerald color scheme"
+      ]
+    },
+    {
+      "title": "with your Alien Samurai",
+      "elements": [
+        "Extraterrestrial feudal world",
+        "cybernetic ronin",
+        "plasma katanas",
+        "iridescent metallic"
+      ]
+    },
+    {
+      "title": "with your angel art",
+      "elements": [
+        "Interdimensional celestial nexus",
+        "bio-engineered guardians",
+        "ethereal luminescence"
+      ]
+    },
+    {
+      "title": "with your bearded man art",
+      "elements": [
+        "Cryogenic revival chamber",
+        "dormant captain",
+        "generation ship",
+        "stark contrasts"
+      ]
+    },
+    {
+      "title": "with your Black and White Art",
+      "elements": [
+        "Monochromatic lunar base",
+        "shadow-dwelling aliens",
+        "light manipulation",
+        "high-contrast grayscale"
+      ]
+    },
+    {
+      "title": "with your colorful art",
+      "elements": [
+        "Psychedelic nebula",
+        "living constellations",
+        "synesthete navigators",
+        "kaleidoscopic explosion"
+      ]
+    },
+    {
+      "title": "with your Cosmic Beauty",
+      "elements": [
+        "Sentient galactic superstructure",
+        "energy beings",
+        "space-fabric sculpting",
+        "cosmic grandeur"
+      ]
+    },
+    {
+      "title": "with your defeat art",
+      "elements": [
+        "Post-apocalyptic Earth",
+        "nature reclaimed",
+        "human resistance",
+        "machine overlords"
+      ]
+    },
+    {
+      "title": "with your gold art",
+      "elements": [
+        "Alchemical space laboratory",
+        "transmutation engines",
+        "immortality quest",
+        "metallic gold-copper"
+      ]
+    },
+    {
+      "title": "with your green art",
+      "elements": [
+        "Biopunk megacity",
+        "genetically-modified flora",
+        "chlorophyll-enhanced humans",
+        "verdant vibrancy"
+      ]
+    },
+    {
+      "title": "with your Knight art",
+      "elements": [
+        "Exoplanet medieval tournament",
+        "plasma lances",
+        "power-armored knights",
+        "technofantasy aesthetic"
+      ]
+    },
+    {
+      "title": "with your Limoncello art",
+      "elements": [
+        "Orbital citrus grove",
+        "xenobotanists",
+        "intergalactic elixir",
+        "zesty yellow mists"
+      ]
+    },
+    {
+      "title": "with your market art",
+      "elements": [
+        "Floating gas giant bazaar",
+        "holographic merchants",
+        "impossible wares",
+        "vibrant alien markets"
+      ]
+    },
+    {
+      "title": "with your Monster Tea Party art",
+      "elements": [
+        "Living spaceship summit",
+        "shape-shifting aliens",
+        "psychoactive brews",
+        "whimsical cosmic horror"
+      ]
+    },
+    {
+      "title": "with your Moon art",
+      "elements": [
+        "Tidal-locked lunar metropolis",
+        "gravitational artists",
+        "moondustscapes",
+        "stark contrasts"
+      ]
+    },
+    {
+      "title": "with your painting art",
+      "elements": [
+        "Virtual reality museum",
+        "impossible artworks",
+        "AI curators",
+        "reality-bending palette"
+      ]
+    },
+    {
+      "title": "with your pilot art",
+      "elements": [
+        "Quantum entanglement cockpit",
+        "cyborg pilots",
+        "multiverse navigation",
+        "sleek futuristic design"
+      ]
+    },
+    {
+      "title": "with your Reverent Silence Art",
+      "elements": [
+        "Interstellar monastery",
+        "telepathic monks",
+        "forgotten civilizations",
+        "muted otherworldly tones"
+      ]
+    },
+    {
+      "title": "with your sailing art",
+      "elements": [
+        "Solar wind spaceship",
+        "stellar cartographers",
+        "cosmic currents",
+        "solar flare palette"
+      ]
+    },
+    {
+      "title": "with your Samurai art",
+      "elements": [
+        "Holographic dojo",
+        "space ronin",
+        "AI sensei",
+        "neo-Tokyo cyberpunk aesthetic"
+      ]
+    },
+    {
+      "title": "with your Tea Time art",
+      "elements": [
+        "Zero-gravity tea ceremony",
+        "time-dilating brews",
+        "generation ship",
+        "delicate cosmic pastels"
+      ]
+    },
+    {
+      "title": "with your Victorian art",
+      "elements": [
+        "Steampunk space elevator",
+        "aether-powered automatons",
+        "neo-London",
+        "brass-fog scheme"
+      ]
+    },
+    {
+      "title": "your assassin",
+      "elements": [
+        "Chameleon-skinned hitman",
+        "neon space station",
+        "mimicking nanobots",
+        "adaptive camouflage"
+      ]
+    },
+    {
+      "title": "your Knight art",
+      "elements": [
+        "Quantum-locked armor",
+        "interdimensional peacekeepers",
+        "AI weapons",
+        "technofantasy fusion"
+      ]
+    },
+    {
+      "title": "your Rocking Horse",
+      "elements": [
+        "Bioengineered low-gravity steeds",
+        "neural-linked riders",
+        "alien steppes",
+        "ethereal starscapes"
+      ]
+    },
+    {
+      "title": "your Selfie",
+      "elements": [
+        "Multidimensional mirror maze",
+        "quantum photographers",
+        "infinite realities",
+        "fractal patterns"
+      ]
+    },
+    {
+      "title": "your Sumo wrestler",
+      "elements": [
+        "Low-gravity martial arts arena",
+        "genetically-enhanced athletes",
+        "alien physics",
+        "dynamic motion"
+      ]
+    },
+    {
+      "title": "with your Alien Art",
+      "elements": [
+        "Hyperdimensional nebula",
+        "pulsating alien megalopolis",
+        "swirling cosmic plasma"
+      ]
+    },
+    {
+      "title": "with your Pink",
+      "elements": [
+        "Antimatter cascade",
+        "cyberpunk metropolis",
+        "retina-searing magenta radiation"
+      ]
+    },
+    {
+      "title": "with your New Cartoon Character Art",
+      "elements": [
+        "Reality-bending art gala",
+        "anti-gravity vortexes",
+        "quantum-entangled extraterrestrials"
+      ]
+    },
+    {
+      "title": "with your Flowers Art",
+      "elements": [
+        "Xenomorphic botanist",
+        "sentient bioluminescent ecosystem",
+        "chromatic neutron star"
+      ]
+    },
+    {
+      "title": "with your Surreal Art",
+      "elements": [
+        "Fractal crystalline motherships",
+        "impossible light spectra",
+        "Earth's wonders"
+      ]
+    },
+    {
+      "title": "with your Women in Harmony Art",
+      "elements": [
+        "Hive-mind alien projections",
+        "holographic dreamscapes",
+        "quantum spacetime fabric"
+      ]
+    }
+  ],
+  "createdAt": "2024-08-31T12:00:00Z"
+}
+```
 
 
 
