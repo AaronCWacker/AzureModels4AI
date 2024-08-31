@@ -562,6 +562,11 @@ These items above have structural logic.  Below is output from the LLM which wil
 }
 ```
 
+Once saved we will have a single item with the normalized language.
+
+
+![image](https://github.com/user-attachments/assets/5ecd60b4-8dc2-41e3-8765-3dc8f041e0ff)
+
 
 
 
