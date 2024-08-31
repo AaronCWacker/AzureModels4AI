@@ -8,6 +8,8 @@
   - /name
 4. When completed it should look like below.  Delete the other DBs.
 
+<img width="274" alt="image" src="https://github.com/user-attachments/assets/c1afff7a-e589-40b7-96c7-a693ec2be6ec">
+
 
 
 
