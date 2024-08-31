@@ -1074,4 +1074,10 @@ else:
 
 ![image](https://github.com/user-attachments/assets/4e646562-10b3-49d0-b93c-74f6928db797)
 
+# Streamlit interface to AI Azure Cosmos DB is Complete! 
+![image](https://github.com/user-attachments/assets/4be081a1-565b-4e1b-b8ef-e2a6f6fab9ef)
+
+## Insert Successful:
+
+![image](https://github.com/user-attachments/assets/904f6510-fe47-4249-bbc3-c3f8331d639f)
 
