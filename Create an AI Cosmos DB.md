@@ -721,5 +721,70 @@ Lets create a new Azure function..
 Make sure the region is the same as your Cosmos DB.  Below it is Central:
 ![image](https://github.com/user-attachments/assets/298ebef9-2f1b-435a-9537-0aae33d23d1c)
 
+Set to Python and give it a name.  Below I use ai01-app.
+
+
+![image](https://github.com/user-attachments/assets/7e84b25d-38ab-4d41-abad-276ae8c3d6b1)
+
+You're absolutely right, and I apologize for the confusion in my previous response. Let's create an Azure Function to handle the HTTP request and a new stored procedure to call this function.
+First, let's create an Azure Function:
+Azure Function: ProcessPromptClick to open code
+Now, let's create a new stored procedure that will call this Azure Function:
+Updated Azure Cosmos DB Stored Procedure: processPromptClick to open code
+To implement this solution:
+
+Deploy the Azure Function:
+
+Create a new Function App in Azure.
+Create a new HTTP-triggered function and paste the code from the "Azure Function: ProcessPrompt" artifact.
+Make sure to install the axios and @azure/cosmos packages in your Function App.
+Set up the following application settings in your Function App:
+
+CosmosDBConnectionString: Your Cosmos DB connection string
+DatabaseName: Your database name
+ContainerName: Your container name
+
+
+
+
+Update the stored procedure:
+
+In your Cosmos DB container, go to the "Stored Procedures" tab.
+Create a new stored procedure named "processPrompt" and paste the code from the "Updated Azure Cosmos DB Stored Procedure" artifact.
+Replace "https://your-function-app.azurewebsites.net/api/ProcessPrompt" with the actual URL of your deployed Azure Function.
+
+
+Update the trigger (if necessary):
+
+If you're still using a trigger, update it to call this new stored procedure instead of the old one.
+
+
+
+This setup addresses the previous issues:
+
+The HTTP request is now made by the Azure Function, which has full internet access.
+The Azure Function can handle any response format from the HuggingFace API. If it's not JSON, you can modify the function to parse it appropriately.
+The Azure Function creates the new document in Cosmos DB, so we don't need to worry about doing that in the stored procedure.
+Error handling is improved, with errors logged in the Azure Function.
+
+Remember to secure your Azure Function appropriately, possibly using Azure AD authentication or function keys, to prevent unauthorized access.
+This solution provides a more robust and scalable approach to processing your prompts and interacting with external APIs while leveraging the power of Cosmos DB triggers and stored procedures.
+
+# Azure Function
+```javascript
+
+```
+
+
+Note - Set Basic auth and enable it to ccontinuous deploy on Change to a git repo.  Shown is the current git repo:
+
+
+![image](https://github.com/user-attachments/assets/ebc8b853-1b5d-421f-ba96-f2f055a6557a)
+
+
+
+![image](https://github.com/user-attachments/assets/91835c2b-e6da-4aad-8d08-b78157520b8d)
+
+
 
 
