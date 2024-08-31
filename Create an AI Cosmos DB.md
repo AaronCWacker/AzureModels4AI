@@ -1105,7 +1105,6 @@ else:
 # Stored Procedure and Streamlit Interface for AI Cosmos DB
 
 ```python
-
 import streamlit as st
 from azure.cosmos import CosmosClient, PartitionKey
 import os
@@ -1216,7 +1215,7 @@ if not st.session_state.logged_in:
         if input_key:
             st.session_state.primary_key = input_key
             st.session_state.logged_in = True
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Please enter a valid key")
 else:
