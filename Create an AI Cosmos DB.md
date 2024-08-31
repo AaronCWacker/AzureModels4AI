@@ -1064,12 +1064,14 @@ else:
 
 ```
 
-
 # Next create it as streamlit app on HF:
 
 # You'll need to set these environment variables by adding to Space secrets.
-DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
-CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+1. DATABASE_NAME = os.environ.get("COSMOS_DATABASE_NAME")
+2. CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME")
+3. COSMOS_DATABASE_NAME = AIDB
+4. COSMOS_CONTAINER_NAME = Container1
 
-COSMOS_DATABASE_NAME = AIDB
-COSMOS_CONTAINER_NAME = Container1
+![image](https://github.com/user-attachments/assets/4e646562-10b3-49d0-b93c-74f6928db797)
+
+
