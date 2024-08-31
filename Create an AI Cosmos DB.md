@@ -772,9 +772,107 @@ This solution provides a more robust and scalable approach to processing your pr
 
 # Azure Function
 ```javascript
+const axios = require('axios');
+const { CosmosClient } = require('@azure/cosmos');
 
+module.exports = async function (context, req) {
+    context.log('JavaScript HTTP trigger function processed a request.');
+
+    const title = req.body.title;
+    const elements = req.body.elements;
+
+    if (!title || !elements) {
+        context.res = {
+            status: 400,
+            body: "Please pass a title and elements in the request body"
+        };
+        return;
+    }
+
+    try {
+        // Combine title and elements into a query string
+        const query = encodeURIComponent(`${title} ${elements.join(" ")}`);
+        const url = `https://huggingface.co/spaces/awacke1/ScienceBrain.AI?q=${query}`;
+
+        // Make the HTTP request
+        const response = await axios.get(url);
+
+        // Create a new document with the response
+        const newDoc = {
+            id: generateGUID(),
+            originalPrompt: {
+                title: title,
+                elements: elements
+            },
+            aiResponse: response.data,
+            createdAt: new Date().toISOString()
+        };
+
+        // Insert the new document into Cosmos DB
+        const cosmosClient = new CosmosClient(process.env.CosmosDBConnectionString);
+        const container = cosmosClient.database(process.env.DatabaseName).container(process.env.ContainerName);
+        const { resource: createdItem } = await container.items.create(newDoc);
+
+        context.res = {
+            status: 200,
+            body: createdItem
+        };
+    } catch (error) {
+        context.log(`Error: ${error.message}`);
+        context.res = {
+            status: 500,
+            body: `Error processing request: ${error.message}`
+        };
+    }
+};
+
+function generateGUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 ```
 
+# Updated stored procedure
+```javascript
+function processPrompt(title, elements) {
+    var context = getContext();
+    var container = context.getCollection();
+    var response = context.getResponse();
+
+    var azureFunctionUrl = "https://your-function-app.azurewebsites.net/api/ProcessPrompt";
+
+    var requestBody = {
+        title: title,
+        elements: elements
+    };
+
+    var isComplete = false;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", azureFunctionUrl, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // The Azure Function has already created the document in Cosmos DB
+                // We just need to return the response
+                response.setBody(JSON.parse(xhr.responseText));
+            } else {
+                throw new Error("Azure Function request failed with status: " + xhr.status);
+            }
+            isComplete = true;
+        }
+    };
+    xhr.send(JSON.stringify(requestBody));
+
+    while (!isComplete) {
+        context.getResponse().setBody("Processing...");
+    }
+}
+
+```
 
 Note - Set Basic auth and enable it to ccontinuous deploy on Change to a git repo.  Shown is the current git repo:
 
