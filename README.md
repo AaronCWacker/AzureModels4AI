@@ -10,4 +10,6 @@ pinned: false
 license: mit
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+The partition key is the field matched for deletes and updates.
+
+![image](https://github.com/user-attachments/assets/4d6a92b4-2452-48c6-8024-d58aa7aec523)
